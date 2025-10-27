@@ -33,7 +33,7 @@ function App() {
   }, [])
 
   const connect = (action: "create-room" | "join-room") => {
-    const ws = new WebSocket("wss://chat-room-8fg1.onrender.com");
+    const ws = new WebSocket("wss://chat-room-8fg1.onrender.com")
     ws.onopen = () => {
       ws.send(JSON.stringify({ type: action, payload: { id: uid, user: username, roomId } }))
       localStorage.setItem("chat-session", JSON.stringify({ username, roomId }))
@@ -43,7 +43,7 @@ function App() {
   }
 
   const reconnect = (user: string, room: string) => {
-    const ws = new WebSocket("ws://localhost:8080")
+    const ws = new WebSocket("wss://chat-room-8fg1.onrender.com")
     ws.onopen = () => ws.send(JSON.stringify({ type: "reconnect", payload: { id: uid, user, roomId: room } }))
     setupHandlers(ws)
     wsRef.current = ws
@@ -188,14 +188,22 @@ function App() {
             <div ref={chatEndRef}></div>
           </div>
 
-          <div className="flex items-center bg-[#111] border-t border-gray-700 p-2 sm:p-3">
+          {/* Mobile keyboard-aware input bar */}
+          <div
+            id="input-bar"
+            className="keyboard-aware flex items-center bg-[#111] border-t border-gray-700 p-2 sm:p-3 sticky bottom-[env(keyboard-inset-height,0)]"
+          >
             <input
               ref={messageRef}
               placeholder="Message..."
               className="flex-1 bg-[#1c1c1c] rounded-full p-2 sm:p-3 px-3 sm:px-5 text-xs sm:text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 placeholder-gray-500"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") sendMessage()
+              onFocus={() => {
+                if ("virtualKeyboard" in navigator) {
+                  // @ts-ignore
+                  navigator.virtualKeyboard.overlaysContent = true
+                }
               }}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             />
             <button
               onClick={sendMessage}

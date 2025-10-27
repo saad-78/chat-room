@@ -14,3 +14,18 @@
   80% { opacity: 1; }
   100% { opacity: 0; transform: translateY(-10px); }
 }
+
+@supports (position: fixed) {
+  input,
+  button {
+    caret-color: auto;
+  }
+
+  /* fixes input bar hiding behind virtual keyboard */
+  @supports (bottom: env(keyboard-inset-height)) {
+    .keyboard-aware {
+      position: sticky;
+      bottom: env(keyboard-inset-height, 0);
+    }
+  }
+}
