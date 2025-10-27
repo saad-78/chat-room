@@ -33,7 +33,7 @@ function App() {
   }, [])
 
   const connect = (action: "create-room" | "join-room") => {
-    const ws = new WebSocket("ws://localhost:8080")
+    const ws = new WebSocket("wss://chat-room-8fg1.onrender.com");
     ws.onopen = () => {
       ws.send(JSON.stringify({ type: action, payload: { id: uid, user: username, roomId } }))
       localStorage.setItem("chat-session", JSON.stringify({ username, roomId }))
